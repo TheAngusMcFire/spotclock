@@ -1,8 +1,4 @@
-//extern crate log;
-//extern crate env_logger;
-
 extern crate librespot;
-//extern crate librespot_metadata;
 extern crate tokio_core;
 extern crate tokio_io;
 extern crate futures;
@@ -18,8 +14,6 @@ use librespot::core::config::SessionConfig;
 use librespot::core::session::Session;
 use librespot::core::spotify_id::SpotifyId;
 use librespot::metadata::{Metadata, Track, Playlist};
-//use librespot::metadata::
-
 
 use librespot::playback::audio_backend;
 use librespot::playback::player::Player;
