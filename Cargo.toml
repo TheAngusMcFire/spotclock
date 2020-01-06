@@ -7,3 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = "2.33.0"
+librespot =  { git = "https://github.com/librespot-org/librespot",  branch = "dev"}
+tokio-core = "0.1"
+tokio-io = "0.1"
+futures = "0.1"
+rand = "0.7.2"
