@@ -18,6 +18,30 @@ use librespot::metadata::{Metadata, Track, Playlist};
 use librespot::playback::audio_backend;
 use librespot::playback::player::Player;
 use librespot::playback::config::PlayerConfig;
+use librespot::playback::mixer;
+use librespot::playback::mixer::MixerConfig;
+use librespot::playback::mixer::Mixer;
+use librespot::playback::mixer::AudioFilter;
+
+
+fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<AudioFilter + Send>>
+{
+    let st : Option<String> = None;
+    let mixer : fn(Option<MixerConfig>) -> Box<Mixer> = mixer::find(st).expect("Invalid mixer");
+
+    let mixer_config = MixerConfig {
+        card: String::from("default"),
+        mixer: String::from("PCM"),
+        index: 0
+    };
+
+    let mixer_test = (mixer)(Some(mixer_config));
+    let audio_filter = mixer_test.get_audio_filter();
+    mixer_test.set_volume(vol);
+    
+    return audio_filter;
+}
+
 
 fn main() 
 {
@@ -52,8 +76,10 @@ fn main()
         .run(Session::connect(session_config, credentials, None, handle))
         .unwrap();
 
+    let audio_filter = get_audio_filter_by_fixed_volume(32000 /* this is the volume */ );
     //get playlist and player instance
-    let (player, _) = Player::new(player_config, session.clone(), None, move || (backend)(None));
+    let (player, _test) = Player::new(player_config, session.clone(), audio_filter, move || (backend)(None));
+
     let plist = core.run(Playlist::get(&session, plist_uri)).unwrap();
 
     //shuffle playlist
