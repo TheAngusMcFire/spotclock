@@ -24,10 +24,10 @@ use librespot::playback::mixer::Mixer;
 use librespot::playback::mixer::AudioFilter;
 
 
-fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<AudioFilter + Send>>
+fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + Send>>
 {
     let st : Option<String> = None;
-    let mixer : fn(Option<MixerConfig>) -> Box<Mixer> = mixer::find(st).expect("Invalid mixer");
+    let mixer : fn(Option<MixerConfig>) -> Box<dyn Mixer> = mixer::find(st).expect("Invalid mixer");
 
     let mixer_config = MixerConfig {
         card: String::from("default"),
@@ -42,19 +42,23 @@ fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<AudioFilter + Send>
     return audio_filter;
 }
 
-
 fn main() 
 {
     let args: Vec<_> = env::args().collect();
 
-    if args.len() != 4 
+    if args.len() != 5 
     {
-        println!("Usage: {} USERNAME PASSWORD PLAYLIST", args[0]);
+        eprintln!("Usage: {} USERNAME PASSWORD PLAYLIST VOLUME", args[0]);
+        return;
     }
 
     //get user and password
     let username = args[1].to_owned();
     let password = args[2].to_owned();
+    let volume_raw = args[4].parse::<i32>().unwrap_or(20);
+
+    if volume_raw > 100 || volume_raw < 0 {eprintln!("Volume needs to be between 0-100%"); return;}
+    let volume = (volume_raw * 655) as u16;
 
     //get playlist handle
     let uri_split = args[3].split(":");
@@ -76,7 +80,7 @@ fn main()
         .run(Session::connect(session_config, credentials, None, handle))
         .unwrap();
 
-    let audio_filter = get_audio_filter_by_fixed_volume(32000 /* this is the volume */ );
+    let audio_filter = get_audio_filter_by_fixed_volume(volume);
     //get playlist and player instance
     let (player, _test) = Player::new(player_config, session.clone(), audio_filter, move || (backend)(None));
 
