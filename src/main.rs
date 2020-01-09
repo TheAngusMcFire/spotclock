@@ -30,6 +30,7 @@ extern
     fn init();
     fn init_port(port : u8, in_out : u8 );
     fn set_port(port : u8, state : u8 );
+    fn nano_sleep(mu_sec : u64);
 }
 
 fn write_pulse()
@@ -37,9 +38,9 @@ fn write_pulse()
     loop
     {
         unsafe{ set_port(7, 1);}
-        thread::sleep(time::Duration::from_micros(8));
-        unsafe{ set_port(7, 0);}thread::sleep(time::Duration::from_micros(8));
-        thread::sleep(time::Duration::from_micros(16));
+        unsafe{nano_sleep(8);}
+        unsafe{ set_port(7, 0);}
+        unsafe{nano_sleep(16);}
     }
 }
 

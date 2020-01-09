@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <time.h>
+
 
 #define PAGE_SIZE (4*1024)
 #define BLOCK_SIZE (4*1024)
@@ -29,6 +31,13 @@ volatile unsigned *gpio;
 
 #define GPIO_PULL *(gpio+37) // Pull up/pull down
 #define GPIO_PULLCLK0 *(gpio+38) // Pull up/pull down clock
+
+static struct timespec req = {0};
+void nano_sleep(uint64_t mu_sec)
+{
+    req.tv_nsec = mu_sec * 1000L;
+    nanosleep(&req, (struct timespec *)NULL);
+}
 
 int32_t init()
 {
