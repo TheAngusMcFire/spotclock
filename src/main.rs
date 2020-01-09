@@ -31,6 +31,7 @@ extern
     fn init_port(port : u8, in_out : u8 );
     fn set_port(port : u8, state : u8 );
     fn nano_sleep(mu_sec : u64);
+    fn gen_sig();
 }
 
 fn write_pulse()
@@ -64,10 +65,10 @@ fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + S
     {
         init();
         init_port(7, 1);
-       
+        gen_sig(); 
     }
 
-    write_pulse();
+    //write_pulse();
 
     return audio_filter;
 }

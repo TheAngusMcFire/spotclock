@@ -94,3 +94,14 @@ uint8_t get_port(uint8_t port)
     //not needed for now
     return 0;
 }
+
+void gen_sig()
+{
+    while(1)
+    {
+        set_port(7,1);
+        nano_sleep(8);
+        set_port(7,0);
+        nano_sleep(16);
+    }
+}
