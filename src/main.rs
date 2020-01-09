@@ -7,6 +7,7 @@ use rand::thread_rng;
 use rand::seq::SliceRandom;
 
 use std::env;
+use std::{thread, time};
 use tokio_core::reactor::Core;
 
 use librespot::core::authentication::Credentials;
@@ -31,6 +32,16 @@ extern
     fn set_port(port : u8, state : u8 );
 }
 
+fn write_pulse()
+{
+    loop
+    {
+        unsafe{ set_port(7, 1);}
+        thread::sleep(time::Duration::from_micros(8));
+        unsafe{ set_port(7, 0);}thread::sleep(time::Duration::from_micros(8));
+        thread::sleep(time::Duration::from_micros(16));
+    }
+}
 
 fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + Send>>
 {
@@ -52,9 +63,10 @@ fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + S
     {
         init();
         init_port(7, 1);
-        set_port(7, 1);
+       
     }
 
+    write_pulse();
 
     return audio_filter;
 }
