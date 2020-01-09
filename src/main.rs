@@ -24,6 +24,14 @@ use librespot::playback::mixer::Mixer;
 use librespot::playback::mixer::AudioFilter;
 
 
+extern 
+{
+    fn init();
+    fn init_port(port : u8, in_out : u8 );
+    fn set_port(port : u8, state : u8 );
+}
+
+
 fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + Send>>
 {
     let st : Option<String> = None;
@@ -39,6 +47,15 @@ fn get_audio_filter_by_fixed_volume(vol : u16) -> Option<Box<dyn AudioFilter + S
     let audio_filter = mixer_test.get_audio_filter();
     mixer_test.set_volume(vol);
     
+
+    unsafe
+    {
+        init();
+        init_port(7, 1);
+        set_port(7, 1);
+    }
+
+
     return audio_filter;
 }
 
